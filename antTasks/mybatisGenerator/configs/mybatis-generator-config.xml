@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+
+    <!--config your db information -->
+    <classPathEntry
+            location="C:\Users\xiuwu.guo\.gradle\caches\modules-2\files-2.1\mysql\mysql-connector-java\5.1.44\61b6b998192c85bb581c6be90e03dcd4b9079db4\mysql-connector-java-5.1.44.jar"/>
+
+    <context id="DB2Tables" targetRuntime="MyBatis3">
+        <property name="autoDelimitKeywords" value="false"/>
+        <property name="javaFileEncoding" value="UTF-8"/>
+        <property name="javaFormatter" value="org.mybatis.generator.api.dom.DefaultJavaFormatter"/>
+        <property name="xmlFormatter" value="org.mybatis.generator.api.dom.DefaultXmlFormatter"/>
+
+        <commentGenerator>
+            <property name="suppressAllComments" value="true"/>
+            <property name="suppressDate" value="true"/>
+        </commentGenerator>
+        <!-- DB Setting -->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/rc" userId="root"
+                        password="123456">
+        </jdbcConnection>
+
+
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <javaModelGenerator targetPackage="com.ebao.gs.sp.rc.model"
+                            targetProject="output">
+            <property name="enableSubPackages" value="false"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <sqlMapGenerator targetPackage="sqlmaps"
+                         targetProject="output">
+            <property name="enableSubPackages" value="false"/>
+        </sqlMapGenerator>
+
+        <!--<javaClientGenerator type="XMLMAPPER"
+                             targetPackage="com.ebao.gs.sp.rc.dao" targetProject="src/main/groovy">
+            <property name="enableSubPackages" value="false"/>
+        </javaClientGenerator>-->
+        <table tableName="t_user" domainObjectName="User"
+               enableInsert="true"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>
+
+        <table tableName="user" domainObjectName="User"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+    </context>
+</generatorConfiguration>

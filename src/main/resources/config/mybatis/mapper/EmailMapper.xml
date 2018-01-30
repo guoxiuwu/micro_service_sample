@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ebao.gs.sp.rc.dao.repo.EmailRepository">
+
+    <resultMap id="ResultMap" type="Email">
+        <id column="EMAIL_ID" property="emailId" jdbcType="INTEGER"/>
+        <result column="SUBJECT" property="subject" jdbcType="VARCHAR"/>
+        <result column="TO_LIST" property="toList" jdbcType="VARCHAR"/>
+        <result column="CC_LIST" property="ccList" jdbcType="VARCHAR"/>
+        <result column="BCC_LIST" property="bccList" jdbcType="VARCHAR"/>
+        <result column="BODY_TLP_NAME" property="contentTemplateName" jdbcType="VARCHAR"/>
+        <result column="STATUS" property="status" jdbcType="TINYINT"/>
+        <result column="RETRY_TIMES" property="retryTimes" jdbcType="INTEGER"/>
+        <result column="LAST_MSG" property="lastSendErrorMessage" jdbcType="VARCHAR"/>
+        <result column="PRIORITY" property="priority" jdbcType="TINYINT"/>
+        <result column="SEND_BY" property="sendBy" jdbcType="TINYINT"/>
+        <result column="INSERT_TIME" property="insertTime" jdbcType="TIMESTAMP"/>
+        <result column="INSERT_USER_ID" property="insertUserId" jdbcType="INTEGER"/>
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="UPDATE_USER_ID" property="updateUserId" jdbcType="INTEGER"/>
+        <result column="VER" property="ver" jdbcType="INTEGER"/>
+        <result column="BODY_TLP_PARAMS" property="contentParams" jdbcType="LONGVARCHAR"
+                typeHandler="com.ebao.gs.sp.rc.service.convert.BasicObjectJPAConvert"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        EMAIL_ID,SUBJECT, TO_LIST, CC_LIST, BCC_LIST, BODY_TLP_NAME,BODY_TLP_PARAMS,
+        STATUS,RETRY_TIMES,LAST_MSG,PRIORITY,SEND_BY, INSERT_TIME, INSERT_USER_ID, UPDATE_TIME, UPDATE_USER_ID, VER
+    </sql>
+    <select id="findOne" resultMap="ResultMap" parameterType="Long">
+        select
+        <include refid="Base_Column_List"/>
+        from t_email
+        where EMAIL_ID = #{emailId,jdbcType=INTEGER}
+    </select>
+    <select id="exists" resultType="Long" parameterType="Long">
+        select count(1)
+        from t_email
+        where EMAIL_ID = #{emailId,jdbcType=INTEGER}
+    </select>
+    <delete id="delete" parameterType="Long">
+        delete from t_email
+        where EMAIL_ID = #{emailId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="Email">
+        <selectKey resultType="Long" keyProperty="emailId" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into t_email (SUBJECT, TO_LIST,
+        CC_LIST, BCC_LIST, BODY_TLP_NAME,STATUS,
+        RETRY_TIMES,LAST_MSG,PRIORITY,SEND_BY,
+        INSERT_TIME, INSERT_USER_ID, UPDATE_TIME,
+        UPDATE_USER_ID, VER,
+        BODY_TLP_PARAMS
+        )
+        values (#{subject,jdbcType=VARCHAR}, #{toList,jdbcType=VARCHAR},
+        #{ccList,jdbcType=VARCHAR},#{bccList,jdbcType=VARCHAR},
+        #{contentTemplateName,jdbcType=VARCHAR},#{status,jdbcType=TINYINT},
+        #{retryTimes,jdbcType=INTEGER},#{lastSendErrorMessage,jdbcType=VARCHAR}, #{priority,jdbcType=TINYINT},
+        #{sendBy,jdbcType=TINYINT},
+        #{insertTime,jdbcType=TIMESTAMP}, #{insertUserId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP},
+        #{updateUserId,jdbcType=INTEGER}, #{ver,jdbcType=INTEGER},
+        #{contentParams,jdbcType=LONGVARCHAR,typeHandler=com.ebao.gs.sp.rc.service.convert.BasicObjectJPAConvert}
+        )
+    </insert>
+    <update id="update" parameterType="Email">
+        update t_email
+        set SUBJECT = #{subject,jdbcType=VARCHAR},
+        TO_LIST = #{toList,jdbcType=VARCHAR},
+        CC_LIST = #{ccList,jdbcType=VARCHAR},
+        BCC_LIST = #{bccList,jdbcType=VARCHAR},
+        BODY_TLP_NAME = #{contentTemplateName,jdbcType=VARCHAR},
+        STATUS = #{status,jdbcType=TINYINT},
+        RETRY_TIMES = #{retryTimes,jdbcType=INTEGER},
+        LAST_MSG = #{lastSendErrorMessage,jdbcType=VARCHAR},
+        PRIORITY = #{priority,jdbcType=TINYINT},
+        SEND_BY = #{sendBy,jdbcType=TINYINT},
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+        UPDATE_USER_ID = #{updateUserId,jdbcType=INTEGER},
+        VER = VER + 1,
+        BODY_TLP_PARAMS =
+        #{contentParams,jdbcType=LONGVARCHAR,typeHandler=com.ebao.gs.sp.rc.service.convert.BasicObjectJPAConvert}
+        where EMAIL_ID = #{emailId,jdbcType=INTEGER}
+        AND VER = #{ver,jdbcType=INTEGER}
+    </update>
+
+
+</mapper>

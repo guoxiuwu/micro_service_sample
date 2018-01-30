@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+Description: Restore MySQL database.
+              Before you run this script, change the username, password accordingly.
+Usage: Run
+          ant -f build.xml restore_db
+-->
+<project basedir="." default="nothing" name="rc">
+
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="apache-ant-1.9.7/lib/ant-contrib-0.6.jar"/>
+        </classpath>
+    </taskdef>
+
+    <!-- Change the following properties accordingly. -->
+    <property name="db.username" value="rc"/>
+    <property name="db.password" value="123456"/>
+    <property name="db.root" value="root"/>
+    <property name="db.rootpwd" value="123456"/>
+    <property name="db.name" value="${ant.project.name}"/>
+    <!-- The name of the database to backup. -->
+    <property name="mysql" value="mysql"/>
+    <!-- Path to mysql program. -->
+    <property name="mysqladmin" value="mysqladmin"/>
+    <!-- Path to mysqladmin program. -->
+
+    <property name="scripts.dir" value="../../dbscript/"/>
+    <property name="basic.scripts.dir" value="${scripts.dir}/basic"/>
+
+    <tstamp>
+        <format property="DAY_TIME_NOW" pattern="yyyy-MM-dd_HH.mm.ss"/>
+    </tstamp>
+
+    <target name="nothing">
+        <echo>By default, it does nothing.</echo>
+    </target>
+    <!-- ***************************************
+    Restore MySQL database
+    **************************************** -->
+    <target name="restore_db">
+        <!-- Clean up the database by deleting and then creating it. -->
+        <antcall target="delete_db"/>
+        <antcall target="create_db"/>
+        <antcall target="import_dump"/>
+    </target>
+
+    <target name="import_dump">
+        <exec executable="${mysql}" input="${basic.scripts.dir}/CreatBasicTable.sql" failonerror="true">
+            <arg value="-u${db.username}"/>
+            <arg value="-p${db.password}"/>
+            <arg value="${db.name}"/>
+            <arg value="--default-character-set=utf8"/>
+        </exec>
+    </target>
+
+    <target name="delete_db">
+        <exec executable="${mysql}">
+            <arg value="-u${db.root}"/>
+            <arg value="-p${db.rootpwd}"/>
+            <arg value="-e GRANT USAGE ON *.* TO '${db.username}'@'%' IDENTIFIED BY '${db.password}'; FLUSH PRIVILEGES; drop user '${db.username}'@'%'"/>
+        </exec>
+        <exec executable="${mysql}">
+            <arg value="-u${db.root}"/>
+            <arg value="-p${db.rootpwd}"/>
+            <arg value="-e drop database if exists ${db.name}"/>
+        </exec>
+    </target>
+
+    <target name="create_db">
+        <exec executable="${mysql}" failonerror="true">
+            <arg value="-u${db.root}"/>
+            <arg value="-p${db.rootpwd}"/>
+            <arg value="-e create database if not exists ${db.name} CHARACTER SET utf8 COLLATE utf8_general_ci"/>
+        </exec>
+
+        <exec executable="${mysql}" failonerror="true">
+            <arg value="-u${db.root}"/>
+            <arg value="-p${db.rootpwd}"/>
+            <arg value="-e CREATE USER '${db.username}'@'%' IDENTIFIED BY '${db.password}'; GRANT ALL PRIVILEGES ON *.* TO '${db.username}'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;"/>
+        </exec>
+    </target>
+
+</project>

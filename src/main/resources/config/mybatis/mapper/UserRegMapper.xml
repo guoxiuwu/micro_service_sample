@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ebao.gs.sp.rc.dao.repo.UserRegRepository">
+
+    <resultMap id="ResultMap" type="UserReg">
+        <id column="USER_REG_ID" property="userRegId" jdbcType="INTEGER"/>
+        <result column="USER_NAME" property="userName" jdbcType="VARCHAR"/>
+        <result column="REAL_NAME" property="realName" jdbcType="VARCHAR"/>
+        <result column="EMAIL" property="email" jdbcType="VARCHAR"/>
+        <result column="MOBILE" property="mobile" jdbcType="VARCHAR"/>
+        <result column="TEL_PHONE" property="mobile" jdbcType="VARCHAR"/>
+        <result column="PASSWORD" property="passWord" jdbcType="VARCHAR"/>
+        <result column="VERIFY_EMAIL_SEND" property="verifyEmailSend" jdbcType="TINYINT"/>
+        <result column="VERIFY_EMAIL_RES" property="verifyEmailRes" jdbcType="TINYINT"/>
+
+        <result column="INSERT_TIME" property="insertTime" jdbcType="TIMESTAMP"/>
+        <result column="INSERT_USER_ID" property="insertUserId" jdbcType="INTEGER"/>
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="UPDATE_USER_ID" property="updateUserId" jdbcType="INTEGER"/>
+
+        <result column="PROFILE" property="userProfile" jdbcType="LONGVARCHAR"
+                typeHandler="com.ebao.gs.sp.rc.service.convert.UserProfileJPAConvert"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        USER_REG_ID, USER_NAME, REAL_NAME, EMAIL, MOBILE, TEL_PHONE,PASSWORD,
+        VERIFY_EMAIL_SEND,VERIFY_EMAIL_RES,INSERT_TIME,INSERT_USER_ID,UPDATE_TIME,UPDATE_USER_ID
+    </sql>
+    <sql id="Blob_Column_List">
+        PROFILE
+    </sql>
+    <select id="findOne" resultMap="ResultMap" parameterType="Long">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from t_user_reg
+        where USER_REG_ID = #{userRegId,jdbcType=INTEGER}
+    </select>
+    <select id="exists" resultType="Long" parameterType="Long">
+        select count(1)
+        from t_user_reg
+        where USER_REG_ID = #{userRegId,jdbcType=INTEGER}
+    </select>
+    <delete id="delete" parameterType="Long">
+        delete from t_user_reg
+        where USER_REG_ID = #{userRegId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="UserReg">
+        <selectKey resultType="Long" keyProperty="userRegId" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into t_user_reg (USER_NAME, REAL_NAME, EMAIL,
+        MOBILE,TEL_PHONE, PASSWORD,
+        VERIFY_EMAIL_SEND,VERIFY_EMAIL_RES,
+        INSERT_TIME, INSERT_USER_ID, UPDATE_TIME,
+        UPDATE_USER_ID,
+        PROFILE
+        )
+        values (#{userName,jdbcType=VARCHAR},#{realName,jdbcType=VARCHAR},
+        #{email,jdbcType=VARCHAR},
+        #{mobile,jdbcType=VARCHAR},#{telPhone,jdbcType=VARCHAR},#{passWord,jdbcType=VARCHAR},
+        #{verifyEmailSend,jdbcType=BIT}, #{verifyEmailRes,jdbcType=TINYINT},
+        #{insertTime,jdbcType=TIMESTAMP}, #{insertUserId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP},
+        #{updateUserId,jdbcType=INTEGER},
+        #{userProfile,jdbcType=LONGVARCHAR,typeHandler=com.ebao.gs.sp.rc.service.convert.UserProfileJPAConvert}
+        )
+    </insert>
+    <update id="update" parameterType="UserReg">
+        update t_user_reg set
+        USER_NAME = #{userName,jdbcType=VARCHAR},
+        REAL_NAME = #{realName,jdbcType=VARCHAR},
+        EMAIL = #{email,jdbcType=VARCHAR},
+        MOBILE = #{mobile,jdbcType=VARCHAR},
+        TEL_PHONE = #{telPhone,jdbcType=VARCHAR},
+        PASSWORD = #{passWord,jdbcType=VARCHAR},
+        VERIFY_EMAIL_SEND = #{verifyEmailSend,jdbcType=BIT},
+        VERIFY_EMAIL_RES = #{verifyEmailRes,jdbcType=TINYINT},
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+        UPDATE_USER_ID = #{updateUserId,jdbcType=INTEGER}
+        PROFILE =
+        #{userProfile,jdbcType=LONGVARCHAR,typeHandler=com.ebao.gs.sp.rc.service.convert.UserProfileJPAConvert}
+        where USER_REG_ID = #{userRegId,jdbcType=INTEGER}
+    </update>
+</mapper>

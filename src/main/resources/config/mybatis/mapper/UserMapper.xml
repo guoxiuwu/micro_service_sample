@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ebao.gs.sp.rc.dao.repo.UserRepository">
+
+    <!-- Use second level cache with Ehcache -->
+<!--    <cache type="org.mybatis.caches.ehcache.EhcacheCache"/>-->
+
+    <resultMap id="ResultMap" type="User">
+        <id column="USER_ID" property="userId" jdbcType="INTEGER"/>
+        <result column="USER_NAME" property="userName" jdbcType="VARCHAR"/>
+        <result column="REAL_NAME" property="realName" jdbcType="VARCHAR"/>
+        <result column="EMAIL" property="email" jdbcType="VARCHAR"/>
+        <result column="MOBILE" property="mobile" jdbcType="VARCHAR"/>
+        <result column="TEL_PHONE" property="telPhone" jdbcType="VARCHAR"/>
+        <result column="PASSWORD" property="passWord" jdbcType="VARCHAR"/>
+
+        <result column="ACCOUNT_NON_EXPIRED" property="accountNonExpired" jdbcType="BIT"/>
+        <result column="ACCOUNT_NON_LOCKED" property="accountNonLocked" jdbcType="BIT"/>
+        <result column="CREDENTIALS_NON_EXPIRED" property="credentialsNonExpired" jdbcType="BIT"/>
+        <result column="ENABLED" property="enabled" jdbcType="BIT"/>
+        <result column="LOGIN_FAILED_TIMES" property="loginFailedTimes" jdbcType="TINYINT"/>
+        <result column="CREDENTIALS_VALID_BY" property="credentialsValidBy" jdbcType="TIMESTAMP"/>
+        <result column="LOCKED_UNTIL_TO" property="lockedUntilTo" jdbcType="TIMESTAMP"/>
+
+        <result column="AUTHORITIES" property="authorities" jdbcType="VARCHAR"
+                typeHandler="com.ebao.gs.sp.rc.service.convert.UserAuthsJPAConverter"/>
+        <result column="PROFILE" property="userProfile" jdbcType="LONGVARCHAR"
+                typeHandler="com.ebao.gs.sp.rc.service.convert.UserProfileJPAConvert"/>
+
+        <result column="INSERT_TIME" property="insertTime" jdbcType="TIMESTAMP"/>
+        <result column="INSERT_USER_ID" property="insertUserId" jdbcType="INTEGER"/>
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="UPDATE_USER_ID" property="updateUserId" jdbcType="INTEGER"/>
+        <result column="VER" property="ver" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        USER_ID,USER_NAME, REAL_NAME, EMAIL, MOBILE, TEL_PHONE,PASSWORD,ACCOUNT_NON_EXPIRED,
+        ACCOUNT_NON_LOCKED,CREDENTIALS_NON_EXPIRED,ENABLED,LOGIN_FAILED_TIMES,CREDENTIALS_VALID_BY,LOCKED_UNTIL_TO,
+        INSERT_TIME, INSERT_USER_ID, UPDATE_TIME, UPDATE_USER_ID, VER
+    </sql>
+    <sql id="Blob_Column_List">
+        AUTHORITIES, PROFILE
+    </sql>
+    <select id="findOne" resultMap="ResultMap" parameterType="Long">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from t_user
+        where USER_ID = #{userId,jdbcType=INTEGER}
+    </select>
+    <select id="exists" resultType="Long" parameterType="Long">
+        select count(1)
+        from t_user
+        where USER_ID = #{userId,jdbcType=INTEGER}
+    </select>
+    <delete id="delete" parameterType="Long">
+        delete from t_user
+        where USER_ID = #{userId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="User">
+        <selectKey resultType="Long" keyProperty="userId" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into t_user (USER_NAME, REAL_NAME, EMAIL,
+        MOBILE,TEL_PHONE,PASSWORD, ACCOUNT_NON_EXPIRED,
+        ACCOUNT_NON_LOCKED,
+        CREDENTIALS_NON_EXPIRED,
+        ENABLED,
+        LOGIN_FAILED_TIMES,
+        CREDENTIALS_VALID_BY,
+        LOCKED_UNTIL_TO,
+        INSERT_TIME, INSERT_USER_ID, UPDATE_TIME,
+        UPDATE_USER_ID, VER,
+        AUTHORITIES,PROFILE
+        )
+        values (#{userName,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
+        #{mobile,jdbcType=VARCHAR},#{telPhone,jdbcType=VARCHAR}, #{passWord,jdbcType=VARCHAR},
+        #{accountNonExpired,jdbcType=BIT},#{accountNonLocked,jdbcType=BIT},
+        #{credentialsNonExpired,jdbcType=BIT},
+        #{enabled,jdbcType=BIT},#{loginFailedTimes,jdbcType=TINYINT}, #{credentialsValidBy,jdbcType=TIMESTAMP},
+        #{lockedUntilTo,jdbcType=TIMESTAMP},
+        #{insertTime,jdbcType=TIMESTAMP}, #{insertUserId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP},
+        #{updateUserId,jdbcType=INTEGER}, #{ver,jdbcType=INTEGER},
+        #{authorities,jdbcType=VARCHAR,typeHandler=com.ebao.gs.sp.rc.service.convert.UserAuthsJPAConverter},
+        #{userProfile,jdbcType=LONGVARCHAR,typeHandler=com.ebao.gs.sp.rc.service.convert.UserProfileJPAConvert}
+        )
+    </insert>
+    <update id="update" parameterType="User">
+        update t_user set
+        USER_NAME = #{userName,jdbcType=VARCHAR},
+        REAL_NAME = #{realName,jdbcType=VARCHAR},
+        EMAIL = #{email,jdbcType=VARCHAR},
+        MOBILE = #{mobile,jdbcType=VARCHAR},
+        TEL_PHONE = #{telPhone,jdbcType=VARCHAR},
+        PASSWORD = #{passWord,jdbcType=VARCHAR},
+        ENABLED = #{enabled,jdbcType=BIT},
+        ACCOUNT_NON_LOCKED = #{accountNonLocked,jdbcType=BIT},
+        ACCOUNT_NON_EXPIRED = #{accountNonExpired,jdbcType=BIT},
+        CREDENTIALS_NON_EXPIRED = #{credentialsNonExpired,jdbcType=BIT},
+        LOGIN_FAILED_TIMES = #{loginFailedTimes,jdbcType=TINYINT},
+        CREDENTIALS_VALID_BY = #{credentialsValidBy,jdbcType=TIMESTAMP},
+        LOCKED_UNTIL_TO = #{lockedUntilTo,jdbcType=TIMESTAMP},
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+        UPDATE_USER_ID = #{updateUserId,jdbcType=INTEGER},
+        VER = VER + 1,
+        AUTHORITIES = #{authorities,jdbcType=VARCHAR,typeHandler=com.ebao.gs.sp.rc.service.convert.UserAuthsJPAConverter},
+        PROFILE = #{userProfile,jdbcType=LONGVARCHAR,typeHandler=com.ebao.gs.sp.rc.service.convert.UserProfileJPAConvert},
+        where USER_ID = #{userId,jdbcType=INTEGER}
+        AND VER = #{ver,jdbcType=INTEGER}
+    </update>
+
+
+</mapper>

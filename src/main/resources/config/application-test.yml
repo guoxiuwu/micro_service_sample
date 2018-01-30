@@ -1,0 +1,19 @@
+### Server ###
+server:
+  port: 8080
+
+### DB ###
+spring.datasource:
+     type: org.apache.commons.dbcp2.BasicDataSource
+     username: gimcde_dev
+     password: gimcde_devpws
+     url: jdbc:mysql://172.25.14.19:3306/gimcde_rc_tst_db?useSSL=false&allowMultiQueries=true
+     # connect pool conf
+     dbcp2:
+       initial-size: 5
+       max-total: 20
+       min-idle: 5
+       max-idle: 20
+       max-wait-millis: 10000
+       default-query-timeout: 180
+       connection-properties: characterEncoding=utf8

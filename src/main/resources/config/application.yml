@@ -1,0 +1,11 @@
+#indicated spring profiles
+spring.profiles.active: localdev
+
+### MyBatis ###
+mybatis:
+    mapper-locations: classpath:config/mybatis/mapper/*.xml
+    type-aliases-package: com.ebao.gs.sp.rc.model
+
+my.var:
+  api_auth_mapping_locations: classpath:config/authority/apiAuths.yml
+  login_failed_locked_minutes: 15

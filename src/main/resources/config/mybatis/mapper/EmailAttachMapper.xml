@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ebao.gs.sp.rc.dao.repo.EmailAttachRepository">
+
+    <resultMap id="ResultMap" type="EmailAttach">
+        <id column="ATTACH_ID" property="attachId" jdbcType="INTEGER"/>
+        <result column="EMAIL_ID" property="emailId" jdbcType="INTEGER"/>
+        <result column="FILE_PATH" property="filePath" jdbcType="VARCHAR"/>
+        <result column="FILE_TYPE" property="fileType" jdbcType="TINYINT"/>
+        <result column="STATUS" property="status" jdbcType="TINYINT"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        ATTACH_ID, EMAIL_ID, FILE_PATH, FILE_TYPE, STATUS
+    </sql>
+    <select id="findOne" resultMap="ResultMap" parameterType="Long">
+        select
+        <include refid="Base_Column_List"/>
+        from t_email_attach
+        where ATTACH_ID = #{attachId,jdbcType=INTEGER}
+    </select>
+    <select id="exists" resultType="Long" parameterType="Long">
+        select count(1)
+        from t_email_attach
+        where ATTACH_ID = #{attachId,jdbcType=INTEGER}
+    </select>
+    <delete id="delete" parameterType="Long">
+        delete from t_email_attach
+        where ATTACH_ID = #{attachId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="EmailAttach">
+        <selectKey resultType="Long" keyProperty="attachId" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into t_email_attach (EMAIL_ID, FILE_PATH, FILE_TYPE, STATUS
+        )
+        values (#{emailId,jdbcType=INTEGER}, #{filePath,jdbcType=VARCHAR}, #{fileType,jdbcType=TINYINT},
+        #{status,jdbcType=TINYINT}
+        )
+    </insert>
+    <update id="update" parameterType="EmailAttach">
+        update t_email_attach
+        set EMAIL_ID = #{emailId,jdbcType=INTEGER},
+        FILE_PATH = #{filePath,jdbcType=VARCHAR},
+        FILE_TYPE = #{fileType,jdbcType=TINYINT},
+        STATUS = #{status,jdbcType=TINYINT},
+        where ATTACH_ID = #{attachId,jdbcType=INTEGER}
+    </update>
+
+
+</mapper>

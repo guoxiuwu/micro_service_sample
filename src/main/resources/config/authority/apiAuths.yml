@@ -1,0 +1,4 @@
+### eg   /api/login/**:['ADMIN','UNDERWRITER']
+/api/login1/**: ['ADMIN','UNDERWRITER']
+/api/login2/**: []
+/hello: ["ADMIN"]
